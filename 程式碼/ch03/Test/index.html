@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html manifest="" lang="zh-cb">
+<head>
+    <meta charset=utf-8"UTF-8">
+    <title>測試頁面</title>
+	<link rel="stylesheet" href="touch/resources/css/sencha-touch.css">
+	<script type="text/javascript" src="touch/sencha-touch-all-debug.js"></script>
+    <style type="text/css">
+		.phone.landscape {
+		    background: url("images/phone-l.jpg") no-repeat scroll 0 0 transparent;
+		    height: 367px;
+		    padding: 22px 79px;
+		    width: 637px;
+		}
+		.phone.portrait {
+			padding: 78px 25px;
+			width: 368px;
+			height: 637px;
+			background: url("images/phone-p.jpg") no-repeat
+		}    
+		.tablet.portrait {
+		    background: url("images/tablet-p.jpg") no-repeat scroll 0 0 transparent;
+		    height:1063px;
+		    width:900px;
+		    padding: 87px 80px;
+		}
+		.tablet.landscape {
+		    background: url("images/tablet-l.jpg") no-repeat scroll 0 0 transparent;
+		    height:900px;
+		    width:1063px;
+		    padding: 83px 87px;
+		}
+		.x-label-align-left,
+		.x-label-align-right {
+		  -webkit-box-orient: horizontal !important;
+		  -ms-flex-direction: row;
+		  flex-direction: row;
+		}
+    </style>
+</head>
+<body>
+	<script>
+		Ext.setup({
+		    onReady: function() {
+				var change=function(device,dir){
+					var div=Ext.get("mainDiv"),
+						iframe=Ext.get("mainFrame");
+					if(device){
+						if(device=="手機"){
+							div.replaceCls("tablet" , "phone");
+						}else{
+							div.replaceCls("phone" , "tablet");
+						}
+					}else{
+						if(dir=="水平"){
+							div.replaceCls("portrait" , "landscape");
+						}else{
+							div.replaceCls("landscape" , "portrait");
+						}
+					}
+					if(div.hasCls("phone")){
+						if(div.hasCls("portrait")){
+							iframe.setSize(320,481);
+						}else{
+							iframe.setSize(481,320);
+						}
+					}else{
+						if(div.hasCls("portrait")){
+							iframe.setSize(538,717);
+						}else{
+							iframe.setSize(717,538);
+						}
+					}
+				}
+
+				Ext.Viewport.add({
+					items:[
+						{
+							xtype:"toolbar",
+							docked:"top",
+							items:[
+								{
+									xtype: "textfield",
+									label: "測試位址：",
+									labelWidth: 100,
+									width: 500
+								},
+								{
+									xtype: "button",
+									text:"載入",
+									handler: function(){
+										var me=this,
+											iframe=Ext.get("mainFrame"),
+											url=this.up().down("textfield").getValue();
+										if(url){
+											iframe.dom.src=url;
+										}
+									}
+								}
+							]
+						},
+						{
+							xtype:"toolbar",
+							docked:"top",
+							items:[
+								{
+								    xtype: 'segmentedbutton',
+								    items: [
+								        { text: '手機', pressed: true},
+								        { text: '平板'},
+								    ],
+								    listeners: {
+								        toggle: function(container, button, pressed){
+								            if(pressed==true){
+								            	change(button.getText(),"")
+								            };
+								        }
+								    }
+								},
+								{ xtype:"spacer", width:20 },
+								{
+								    xtype: 'segmentedbutton',
+								    items: [
+								        { text: '水平'},
+								        { text: '豎向', pressed: true  }
+								    ],
+								    listeners: {
+								        toggle: function(container, button, pressed){
+								            change("",button.getText());
+								        }
+								    }
+								}
+							]
+						},
+						{
+							padding:20,
+							html:'<div id="mainDiv" class="phone portrait"><iframe id="mainFrame" style="border:0;width:320px;height:481px;" src=""></iframe></div>'
+						}
+					]
+				})
+		    }
+		});
+	</script>
+</body>
+</html>
